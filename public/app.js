@@ -1,12 +1,21 @@
 //grab articles as a json
   $.getJSON('/articles', function(data) {
+    console.log(data);
     //for each one
     console.log("data=",data);
     for (var i = 0; i<data.length; i++){
     //display info on page
-    $('#articles').append('<p data-id="' + data[i]._id + '">'+ data[i].title + '<br />'+ data[i].link + '</p>');
-}
-});
+    if(data[i].note){
+        noteExists = '<span style="color: yellow"><sup> *note attached*</sup></span>'
+        }else{
+          noteExists = "";
+      }
+     $('#articles').append('<h2><p data-id="' + data[i]._id + '">' + data[i].title + noteExists+'</p></h2>'+'<a href='+data[i].link +' target = "_blank">'+data[i].link+"<br />");
+     $('#articles').append("___________");
+   }
+     $('#articles').append("___________");
+ });
+
 
 $(document).on('click', 'p', function(){
   //empty notes from note section
@@ -85,10 +94,10 @@ $(document).on('click', '#deletenote', function(){
   location.reload();
   $('#titleinput').val("");
   $('#bodyinput').val("");
-  
+
 });
 
-$(document).on('click', '#nytimeslogo', function(){
+$(document).on('click', '#deadlinelogo', function(){
 $('#head').css("color", "white");
   $.ajax({
     method: "POST",

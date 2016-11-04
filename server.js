@@ -45,16 +45,17 @@ var Article = require('./models/Article.js');
 app.get('/articles', function(req, res){
     request('http://www.deadline.com/', function(error, response, html) {
     var $ = cheerio.load(html);
-
+        var obj = {};
+        var count = 0;
 	    	$('article .article-inner').each(function(i, element) {
 					var result = {};
 					result.title = $(this).children('a').attr('title');
 					result.link = $(this).children('a').attr('href');
-          console.log(result)
 					if(result.link.indexOf("http")<0){
-						result.link='http://www.nytimes.com'+result.link;
+						result.link='http://www.deadline.com'+result.link;
 					}
-
+          count++
+          obj[count] = result;
 					var entry = new Article (result);
 					entry.save(function(err, doc) {
 					  if (err) {
@@ -62,7 +63,7 @@ app.get('/articles', function(req, res){
 					  }
 					})
 	    })
-
+      res.json(obj);
       Article.find({}, function(err, doc){
 				if (err){
 					console.log(err);
