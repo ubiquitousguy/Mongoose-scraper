@@ -18,10 +18,11 @@ app.use(express.static('public'));
 
 var database = {
     local: 'mongodb://local/mongoose-scraper',
-    remote: //need to fill this in with mlabs link
+    remote:'mongodb:ubiquitousguy:password7@ds143737.mlab.com:43737/mongoose-scraper'
+
 }
 
-var otherDB = datebase.remote;
+var otherDB = database.remote;
 mongoose.connect(otherDB);
 
 db = mongoose.connection;
@@ -41,15 +42,15 @@ var Article = require('./models/Article.js');
 // Routes
 
 //scrape articles, place in MongoDB, and return them in doc for rendering in browser
-app.get('/scrape', function(req, res){
-    request('http://www.nytimes.com/', function(error, response, html) {
+app.get('/articles', function(req, res){
+    request('http://www.deadline.com/', function(error, response, html) {
     var $ = cheerio.load(html);
 
-	    	$('article').each(function(i, element) {
+	    	$('article .article-inner').each(function(i, element) {
 					var result = {};
-					result.title = $(this).find('span').text();
+					result.title = $(this).children('a').attr('title');
 					result.link = $(this).children('a').attr('href');
-
+          console.log(result)
 					if(result.link.indexOf("http")<0){
 						result.link='http://www.nytimes.com'+result.link;
 					}
@@ -170,3 +171,4 @@ res.end();
 //start express server
 app.listen(PORT, function() {
     console.log("Server listening on PORT: " + PORT);
+  })
